@@ -3,7 +3,8 @@ from Tilecoder import numTilings, numTiles, tilecode
 from pylab import *  # includes numpy
 
 numRuns = 1
-n = numTiles * 3
+n = numTiles * 3 # number of components
+tileIndices = [-1]*numTilings  # initialize the list of tileindices
 
 def learn(alpha=.1/numTilings, epsilon=0, numEpisodes=200):
     theta1 = -0.001*rand(n)
@@ -11,9 +12,11 @@ def learn(alpha=.1/numTilings, epsilon=0, numEpisodes=200):
     returnSum = 0.0
     for episodeNum in range(numEpisodes):
         G = 0
-        ...
-        your code goes here (20-30 lines, depending on modularity)
-        ...
+        S = mountaincar.init()
+
+        while True:
+            tilecode(S[0], S[1], tileIndices)
+            
         print("Episode: ", episodeNum, "Steps:", step, "Return: ", G)
         returnSum = returnSum + G
     print("Average return:", returnSum / numEpisodes)
