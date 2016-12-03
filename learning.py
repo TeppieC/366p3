@@ -22,6 +22,26 @@ def product(theta, phi, indices):
             result += theta
     return result
 
+'''
+    repeat for each episode:
+        init S
+        repeat for each step:
+            choose the e-greedy action
+            fill the features phi
+            perform action, observe R,S'
+            add R to G
+
+            if S' is terminal:
+                update theta1 & theta2
+                break
+            else if S' is not terminal:
+                choose the greedy action, wrt the q of S',A': 
+                    for each possible A', find q, choose the A' with the greatest q
+                update theta1&theta2, using phi, newPhi
+            S = S'
+'''
+
+
 def learn(alpha=.1/numTilings, epsilon=0, numEpisodes=200):
     theta1 = -0.001*rand(n)
     theta2 = -0.001*rand(n)
@@ -42,11 +62,11 @@ def learn(alpha=.1/numTilings, epsilon=0, numEpisodes=200):
             # choose action, from a epsilon greedy
             num=np.random.random()
             if (num>=epsilon):
-                for action in range(0,3):
+                for possibleAction in range(0,3):
                     # generate q value for each possible actions
                     for index in tileIndices: # implementing the vector multiplication thetaT*phi
-                        q1[action] = q1[action] + theta1[action*numTiles+index]*1
-                        q2[action] = q2[action] + theta2[action*numTiles+index]*1
+                        q1[possibleAction] = q1[possibleAction] + theta1[possibleAction*numTiles+index]*1
+                        q2[possibleAction] = q2[possibleAction] + theta2[possibleAction*numTiles+index]*1
                 action = argmax(q1+q2) # choose the greedy action
             else:
                 action = np.random.randint(0,3) # choose the stochastic action
@@ -63,8 +83,10 @@ def learn(alpha=.1/numTilings, epsilon=0, numEpisodes=200):
 
             if nextState==None:
                 # terminal state
-                theta1 = theta1 + alpha*(reward-theta1)*phi
-                theta2 = theta2 + alpha*(reward-theta2)*phi
+                # theta1 = theta1 + alpha*(reward-theta1)*phi
+                # theta2 = theta2 + alpha*(reward-theta2)*phi
+                theta1 = theta1 + alpha*(reward - q1[action])*phi
+                theta2 = theta2 + alpha*(reward - q2[action])*phi
                 break
             else:
                 # not terminal state
@@ -93,20 +115,21 @@ def learn(alpha=.1/numTilings, epsilon=0, numEpisodes=200):
                 for action in range(0,3):
                     # generate q value for each possible actions
                     for index in nextTileIndices: # implementing the vector multiplication thetaT*phi
-                        q1[action] = q1[action] + theta1[action*numTiles+index]*1
-                        q2[action] = q2[action] + theta2[action*numTiles+index]*1
+                        nextQ1[action] = nextQ1[action] + theta1[action*numTiles+index]*1
+                        nextQ2[action] = nextQ2[action] + theta2[action*numTiles+index]*1
                 nextAction = argmax(q1+q2) # choose the greedy action
 
                 # indicates which position in phi is 1
                 nextIndices = [nextAction*numTiles+index for index in nextTileIndices]
                 # generating features, based on the action chosen in this state
                 for index in nextIndices:
-                    phi[index] = 1 # phi vector is generated for this state-action pair
+                    nextPhi[index] = 1 # phi vector is generated for this state-action pair
 
                 if np.random.randint(0,2): # with 0.5 probability
-                    theta1 = theta1 + alpha*(reward + gamma*product(theta2, nextPhi, nextIndices) - theta1)*phi
+                    #theta1 = theta1 + alpha*(reward + gamma*product(theta2, nextPhi, nextIndices) - theta1)*phi
+                    theta1 = theta1 + alpha*(reward + gamma*nextQ2[nextAction] - q1[action])*phi
                 else:  # with 0.5 probability
-                    theta2 = theta2 + alpha*(reward + gamma*product(theta1, nextPhi, nextIndices) - theta2)*hi
+                    theta2 = theta2 + alpha*(reward + gamma*nextQ1[nextAction] - q2[action])*phi
 
             state = nextState
             #phi = nextPhi
@@ -138,3 +161,4 @@ if __name__ == '__main__':
         returnSum, theta1, theta2 = learn()
         runSum += returnSum
     print("Overall performance: Average sum of return per run:", runSum/numRuns)
+    writeF(theta1, theta2)
