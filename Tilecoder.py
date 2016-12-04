@@ -4,8 +4,8 @@ numTiles = numTilings*9*9
 def tilecode(in1,in2,tileIndices):
     # write your tilecoder here (5 lines or so)
 	for i in range(numTilings):
-		newX = int((in1+0.6/4*i)/0.6)
-		newY = int((in2+0.6/4*i)/0.6)
+		newX = int((in1+1.2+0.2125/4*i)/0.2125)
+		newY = int((in2+0.07+0.0175/4*i)/0.0175)
 		tileIndices[i] = newX+newY*9+81*i
 	return tileIndices
     
