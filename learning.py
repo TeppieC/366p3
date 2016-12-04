@@ -46,8 +46,8 @@ def learn(alpha=.1/numTilings, epsilon=0, numEpisodes=200):
         start = True
 
         while True:
-            print('$'*80)
-            print('new state')
+            #print('$'*80)
+            #print('new state: ', state)
             q1 = [0]*3 # for each possible actions, each has a q value
             q2 = [0]*3
             phi = [0]*n # initialize the list of features ø
@@ -66,17 +66,20 @@ def learn(alpha=.1/numTilings, epsilon=0, numEpisodes=200):
             else:
                 action = np.random.randint(0,3) # choose the stochastic action
 
-            print('action is: ', action)
+            #print('action is: ', action)
             # actually generate the features, based on the action
             indices = [action*numTiles+index for index in tileIndices] # indicates which position in phi is 1
-            print('indices: ', indices)
+            #print('indices: ', indices)
             # generating features, based on the action chosen in this state
             for index in indices:
                 phi[index] = 1 # phi vector is generated for this state-action pair
 
             # sample the next state, reward
             reward, nextState = mountaincar.sample(state, action)
+            #print('nextState:', nextState)
+            #print('reward: ',reward)
             G = G+reward
+            #print('G:', G)
 
             if nextState==None:
                 # terminal state
@@ -101,9 +104,8 @@ def learn(alpha=.1/numTilings, epsilon=0, numEpisodes=200):
                         nextQ1[action] = nextQ1[action] + theta1[action*numTiles+index]*1
                         nextQ2[action] = nextQ2[action] + theta2[action*numTiles+index]*1
                 nextAction = argmax([a+b for a, b in zip(nextQ1, nextQ2)]) # choose the greedy action
-                print('greedy action is: ', nextAction)
-                print('reward: ',reward)
-                
+                #print('greedy action is: ', nextAction)
+
                 if np.random.randint(0,2): # with 0.5 probability
                     #theta1 = theta1 + alpha*(reward + gamma*product(theta2, nextPhi, nextIndices) - theta1)*phi
                     #print(len(theta1))
