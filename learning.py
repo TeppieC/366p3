@@ -2,7 +2,7 @@ import mountaincar
 from Tilecoder import numTilings, numTiles, tilecode
 from pylab import *  # includes numpy
 
-numRuns = 1
+numRuns = 5
 # numTiles: 4*4*9
 n = numTiles * 3 # number of components
 gamma = 1
@@ -34,7 +34,7 @@ def learn(alpha=.1/numTilings, epsilon=0, numEpisodes=200):
     for episodeNum in range(numEpisodes):
         G = 0.0
         state = mountaincar.init() # S[0] is the position, S[1] is the velocity
-        start = True
+        #start = True
         step = 0
         while True:
             #print('$'*80)
@@ -64,8 +64,8 @@ def learn(alpha=.1/numTilings, epsilon=0, numEpisodes=200):
             indices = [action*numTiles+index for index in tileIndices] # indicates which position in phi is 1
             #print('indices: ', indices)
             # generating features, based on the action chosen in this state
-            for index in indices:
-                phi[index] = 1 # phi vector is generated for this state-action pair
+            #for index in indices:
+            #    phi[index] = 1 # phi vector is generated for this state-action pair
 
             # sample the next state, reward
             reward, nextState = mountaincar.sample(state, action)
@@ -92,7 +92,7 @@ def learn(alpha=.1/numTilings, epsilon=0, numEpisodes=200):
                 # need to compute phi for the next state
                 nextQ1 = [0]*3
                 nextQ2 = [0]*3
-                nextPhi = [0]*n
+                #nextPhi = [0]*n
                 nextTileIndices = [-1]*numTilings
                 tilecode(nextState[0], nextState[1], nextTileIndices)
                 #print('nextTileIndices: ', nextTileIndices)
@@ -154,9 +154,9 @@ def learn(alpha=.1/numTilings, epsilon=0, numEpisodes=200):
             state = nextState
             #phi = nextPhi
 
-        print("Episode: ", episodeNum, "Steps:", step, "Return: ", G)
+        #print("Episode: ", episodeNum, "Steps:", step, "Return: ", G)
         returnSum = returnSum + G
-    print("Average return:", returnSum / numEpisodes)
+    #print("Average return:", returnSum / numEpisodes)
     return returnSum, theta1, theta2
 
     
@@ -193,7 +193,7 @@ if __name__ == '__main__':
     for run in range(numRuns):
         returnSum, theta1, theta2 = learn()
         runSum += returnSum
-    print("Overall performance: Average sum of return per run:", end="")
-    print(runSum / numRuns)
+    #print("Overall performance: Average sum of return per run:", end="")
+    #print(runSum / numRuns)
 
     #writeF(theta1, theta2)
