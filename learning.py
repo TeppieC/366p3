@@ -55,13 +55,13 @@ def learn(alpha=.1/numTilings, epsilon=0, numEpisodes=200):
                 if np.random.randint(0,2):
                     for i in indices:
                         theta1[i] = theta1[i] + alpha*(reward - q1[action])
-                        G = G+reward
-                        step+=1
+                        #G = G+reward
+                        #step+=1
                 else:
                     for i in indices:
                         theta2[i] = theta2[i] + alpha*(reward - q2[action])
-                        G = G+reward
-                        step+=1
+                        #G = G+reward
+                        #step+=1
                 break
             else:
                 # not terminal S
@@ -75,26 +75,23 @@ def learn(alpha=.1/numTilings, epsilon=0, numEpisodes=200):
 
                 nextQ1 = Qs(nextTileIndices, theta1)
                 nextQ2 = Qs(nextTileIndices, theta2)
-                q = [0]*3
-                for i in range(3):
-                    q[i] = nextQ1[i] + nextQ2[i]
-                nextAction = argmax(q)
 
                 if np.random.randint(0,2): # with 0.5 probability
-
+                    nextAction = argmax(nextQ1)
                     for i in indices:
                         theta1[i] = theta1[i] + alpha*(reward+nextQ2[nextAction]-q1[action])
 
                 else:  # with 0.5 probability
+                    nextAction = argmax(nextQ2)
                     for i in indices:
                         theta2[i] = theta2[i] + alpha*(reward+nextQ1[nextAction]-q2[action])
                     #print(theta2)
 
             S = nextS
 
-        print("Episode: ", episodeNum, "Steps:", step, "Return: ", G)
+        #print("Episode: ", episodeNum, "Steps:", step, "Return: ", G)
         returnSum = returnSum + G
-    print("Average return:", returnSum / numEpisodes)
+    #print("Average return:", returnSum / numEpisodes)
     return returnSum, theta1, theta2
 
     
@@ -129,9 +126,9 @@ def writeF(theta1, theta2):
 if __name__ == '__main__':
     runSum = 0.0
     for run in range(numRuns):
-        returnSum, theta1, theta2 = learn(numEpisodes=1000)
+        returnSum, theta1, theta2 = learn(numEpisodes=200)
         runSum += returnSum
-    print("Overall performance: Average sum of return per run:", end="")
+    #print("Overall performance: Average sum of return per run:", end="")
     print(runSum / numRuns)
 
     writeF(theta1, theta2)
