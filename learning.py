@@ -2,7 +2,7 @@ import mountaincar
 from Tilecoder import numTilings, numTiles, tilecode
 from pylab import *  # includes numpy
 
-numRuns = 5
+numRuns = 1
 # numTiles: 4*4*9
 n = numTiles * 3 # number of components
 numEpisodes=200
@@ -100,7 +100,7 @@ def learn(alpha=.1/numTilings, epsilon=0, numEpisodes=200):
 
 #Additional code here to write average performance data to files for plotting...
 #You will first need to add an array in which to collect the data
-def writeD():
+def plot():
 	f_mean=open('avgret.dat', 'w')
 	f_step=open('avgsteps.dat', 'w')
 	for _ in range(numEpisodes):
@@ -146,4 +146,4 @@ if __name__ == '__main__':
     #print(runSum / numRuns)
 
     writeF(theta1, theta2)
-    writeD()
+    plot()
